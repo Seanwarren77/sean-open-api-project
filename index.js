@@ -10,7 +10,8 @@ function getWeatherDescription(code) {
     3: "Overcast ☁️",
     45: "Fog 🌫️",
     61: "Rain 🌧️",
-    71: "Snow ❄️"
+    71: "Snow ❄️",
+    80: "Rain Showers 🌦️"
   };
 
   return weatherMap[code] || "Unknown Weather";
