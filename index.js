@@ -1,6 +1,8 @@
-// ==============================
+// ===================================
 // WEATHER DESCRIPTION FUNCTION
-// ==============================
+// Converts Open-Meteo weather codes
+// into readable weather descriptions
+// ===================================
 
 function getWeatherDescription(code) {
   const weatherMap = {
@@ -17,9 +19,10 @@ function getWeatherDescription(code) {
   return weatherMap[code] || "Unknown Weather";
 }
 
-// =====================
-// FETCH FUNCTION
-// =====================
+// =========================================
+// ENDPOINT # 1 - CURRENT WEATHER
+// Fetches wind speed and weather condition 
+// =========================================
 
 function getWeather(lat, lon) {
 
@@ -28,23 +31,19 @@ fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&c
 .then (data => {
   console.log(data);
 
-  const temperature = data.current_weather.temperature;
   const windspeed = data.current_weather.windspeed;
   const weatherCode = data.current_weather.weathercode;
 
   const description = getWeatherDescription(weatherCode);
 
 // Select Elements
-  const tempElement = document.getElementById("temp");
   const windElement = document.getElementById("wind");
   const descElement = document.getElementById("condition");
 
 // Update page
-  tempElement.innerText = `Temperature: ${temperature} °C`;
   windElement.innerText = `Wind Speed: ${windspeed} km/h`;
   descElement.innerText = `Condition: ${description}`;
 
-  console.log("Temperature:", temperature);
   console.log("Wind Speed:", windspeed);
   
 })
@@ -54,22 +53,62 @@ fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&c
 });
 }
 
+// ============================
+// ENDPOINT # 2 - TEMPERATURE
+// Fetches temperature data
+// ============================
+
+function getTemperature(lat, lon) {
+
+fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m`)
+.then(response => response.json())
+.then (data => {
+  console.log(data);
+
+  const temperature = data.hourly.temperature_2m[0];
+  
+// Select Elements
+  const tempElement = document.getElementById("temp");
+
+// Update page
+  tempElement.innerText = `Temperature: ${temperature} °C`;
+  
+  console.log("Temperature:", temperature);
+  
+})
+
+.catch(error => {
+  console.error("Error fetching temperature:", error);
+});
+}
+
 // =======================
 // DEFAULT LOAD (Raleigh)
+// Runs when page loads
 // =======================
 
+getTemperature(35.78, -78.64);
 getWeather(35.78, -78.64);
 
 // =======================
 // BUTTON EVENT LISTENERS
 // =======================
 
+// =================================
+// CITY NAVIGATION BUTTONS
+// Each click makes new API requests
+// =================================
+
+// Raleigh Button 
 document.getElementById("raleigh")
 .addEventListener("click", function () {
+  getTemperature(35.78, -78.64);
   getWeather(35.78, -78.64);
 });
 
+// New York Button 
 document.getElementById("newyork")
 .addEventListener("click", function () {
+  getTemperature(40.71, -74.00);
   getWeather(40.71, -74.00);
 });
